@@ -13,7 +13,7 @@ class Layout extends Component {
 	}
 
 	clearAllHighlights() {
-		for (const [key, circle] of this.storage.getStore()) {
+		for (const [key, circle] of this.storage.getRawStore()) {
 			if (circle.isHighlighted) {
 				circle.isHighlighted = false;
 			}
@@ -34,7 +34,7 @@ class Layout extends Component {
 	handleDocumentKeyDown(event: KeyboardEvent) {
 		if (event.key === "Delete") {
 			const highlightedCircles = this.storage
-				.getStore()
+				.getRawStore()
 				.filter(([, circle]) => circle.isHighlighted);
 
 			for (const [key] of highlightedCircles) {
@@ -75,7 +75,7 @@ class Layout extends Component {
 	render() {
 		return (
 			<S.Layout onClick={this.handleLayoutClick}>
-				{this.storage.getStore().map(([key, circle]) => (
+				{this.storage.getRawStore().map(([key, circle]) => (
 					<Circle
 						key={`circle-${key}`}
 						{...circle.getPosition()}

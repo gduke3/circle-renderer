@@ -37,8 +37,12 @@ class Storage<T> implements IStorage<T> {
 		}
 	}
 
-	getStore() {
+	getRawStore() {
 		return this.store;
+	}
+
+	getStore() {
+		return this.store.map(([, item]) => item);
 	}
 }
 
@@ -48,6 +52,7 @@ export interface IStorage<T> {
 	setItem: (key: number, item: T) => void;
 	addItem: (item: T) => void;
 	removeItem: (key: number) => void;
-	getStore: () => StoreItem<T>[];
+	getRawStore: () => StoreItem<T>[];
+	getStore: () => T[];
 }
 export type StoreItem<T> = [key: number, item: T];

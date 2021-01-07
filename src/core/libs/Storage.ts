@@ -5,13 +5,23 @@ class Storage<T> implements IStorage<T> {
 		this.store = initialStore;
 	}
 
-	getItem(key: number | string) {
+	private getMaxKey() {
+		return Math.max(...this.store.map(([key]) => Number(key)));
+	}
+
+	addItem(item: T) {
+		const maxKey = this.getMaxKey();
+
+		this.setItem(maxKey + 1, item);
+	}
+
+	getItem(key: number) {
 		const item = this.store.find(([itemKey]) => key === itemKey);
 
 		return item || null;
 	}
 
-	setItem(key: number | string, item: T) {
+	setItem(key: number, item: T) {
 		const everyIsNotHaveThisKey = this.store.every(([itemKey]) => itemKey !== key);
 
 		if (everyIsNotHaveThisKey) {
@@ -19,7 +29,7 @@ class Storage<T> implements IStorage<T> {
 		}
 	}
 
-	removeItem(key: number | string) {
+	removeItem(key: number) {
 		const item = this.getItem(key);
 
 		if (item) {
@@ -34,9 +44,10 @@ class Storage<T> implements IStorage<T> {
 
 export { Storage };
 export interface IStorage<T> {
-	getItem: (key: number | string) => StoreItem<T> | null;
-	setItem: (key: number | string, item: T) => void;
+	getItem: (key: number) => StoreItem<T> | null;
+	setItem: (key: number, item: T) => void;
+	addItem: (item: T) => void;
 	removeItem: (key: number) => void;
 	getStore: () => StoreItem<T>[];
 }
-export type StoreItem<T> = [key: number | string, item: T];
+export type StoreItem<T> = [key: number, item: T];

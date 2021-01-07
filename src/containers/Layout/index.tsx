@@ -12,18 +12,75 @@ class Layout extends Component {
 		this.storage = new Storage<ICircleHelper>();
 	}
 
-	handleDocumentKeyDown(event: KeyboardEvent) {}
+	clearAllHighlights() {
+		for (const [key, circle] of this.storage.getStore()) {
+			if (circle.isHighlighted) {
+				circle.isHighlighted = false;
+			}
+			this.storage.setItem(key, circle);
+		}
+	}
 
-	handleCircleClick(event: React.MouseEvent<HTMLDivElement>) {}
+	handleLayoutClick(event: React.MouseEvent<HTMLDivElement>) {
+		const position = { x: event.clientX, y: event.clientY };
+		const circle = new CircleHelper({ ...position, isHighlighted: true });
+
+		this.clearAllHighlights();
+		this.storage.addItem(circle);
+
+		this.forceUpdate();
+	}
+
+	handleDocumentKeyDown(event: KeyboardEvent) {
+		if (event.key === "Delete") {
+			const highlightedCircles = this.storage
+				.getStore()
+				.filter(([, circle]) => circle.isHighlighted);
+
+			for (const [key] of highlightedCircles) {
+				this.storage.removeItem(key);
+			}
+
+			this.forceUpdate();
+		}
+	}
+
+	handleCircleClick(key: number) {
+		return (event: React.MouseEvent<HTMLDivElement>) => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			const [, circle] = this.storage.getItem(key) || [];
+
+			if (circle) {
+				if (event.altKey === false) {
+					this.clearAllHighlights();
+				}
+				circle.isHighlighted = true;
+				this.storage.setItem(key, circle);
+
+				this.forceUpdate();
+			}
+		};
+	}
+
+	componentDidMount() {
+		document.addEventListener("keydown", this.handleDocumentKeyDown);
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener("keydown", this.handleDocumentKeyDown);
+	}
 
 	render() {
 		return (
-			<S.Layout>
+			<S.Layout onClick={this.handleLayoutClick}>
 				{this.storage.getStore().map(([key, circle]) => (
 					<Circle
 						key={`circle-${key}`}
 						{...circle.getPosition()}
 						radius={circle.getRadius()}
+						onClick={this.handleCircleClick(key)}
 					/>
 				))}
 			</S.Layout>

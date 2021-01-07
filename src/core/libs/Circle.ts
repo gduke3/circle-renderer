@@ -7,9 +7,11 @@ class Circle implements ICircle {
 	isHighlighted: boolean;
 
 	constructor({ x, y, isHighlighted = false }: { x: number; y: number; isHighlighted?: boolean }) {
-		this.x = x;
-		this.y = y;
-		this.radius = constantsCommon.CIRCLE_RADIUS;
+		const radius = constantsCommon.CIRCLE_RADIUS;
+
+		this.x = x - radius;
+		this.y = y - radius;
+		this.radius = radius;
 		this.isHighlighted = isHighlighted;
 	}
 

@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import GlobalHTMLStyles from "./styled/html";
 import { App } from "./app";
 
 import reportWebVitals from "./reportWebVitals";
@@ -8,6 +9,7 @@ const rootElement = document.getElementById("app");
 
 ReactDOM.render(
 	<React.StrictMode>
+		<GlobalHTMLStyles />
 		<App />
 	</React.StrictMode>,
 	rootElement

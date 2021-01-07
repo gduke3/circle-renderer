@@ -12,12 +12,11 @@ class Layout extends Component {
 		this.storage = new Storage<ICircleHelper>();
 	}
 
-	clearAllHighlights() {
+	clearAllHighlights(without: number[] = []) {
 		for (const [key, circle] of this.storage.getRawStore()) {
-			if (circle.isHighlighted) {
+			if (circle.isHighlighted && without.includes(key) === false) {
 				circle.isHighlighted = false;
 			}
-			this.storage.setItem(key, circle);
 		}
 	}
 
@@ -53,11 +52,12 @@ class Layout extends Component {
 			const [, circle] = this.storage.getItem(key) || [];
 
 			if (circle) {
-				if (event.altKey === false) {
-					this.clearAllHighlights();
+				if (event.ctrlKey === false) {
+					this.clearAllHighlights([key]);
+					circle.isHighlighted = !circle.isHighlighted;
+				} else {
+					circle.isHighlighted = true;
 				}
-				circle.isHighlighted = true;
-				this.storage.setItem(key, circle);
 
 				this.forceUpdate();
 			}
@@ -65,7 +65,7 @@ class Layout extends Component {
 	}
 
 	componentDidMount() {
-		document.addEventListener("keydown", this.handleDocumentKeyDown);
+		document.addEventListener("keydown", this.handleDocumentKeyDown.bind(this));
 	}
 
 	componentWillUnmount() {
@@ -74,13 +74,14 @@ class Layout extends Component {
 
 	render() {
 		return (
-			<S.Layout onClick={this.handleLayoutClick}>
+			<S.Layout onClick={this.handleLayoutClick.bind(this)}>
 				{this.storage.getRawStore().map(([key, circle]) => (
 					<Circle
 						key={`circle-${key}`}
 						{...circle.getPosition()}
 						radius={circle.getRadius()}
-						onClick={this.handleCircleClick(key)}
+						isHighlighted={circle.isHighlighted}
+						onClick={this.handleCircleClick(key).bind(this)}
 					/>
 				))}
 			</S.Layout>

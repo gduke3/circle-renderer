@@ -1,7 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import * as S from "./styled";
 
-const Circle = ({ x, y, radius, isHighlighted = false, onClick }: Readonly<Props>) => {
+const Circle = memo(({ x, y, radius, isHighlighted = false, onClick }: Readonly<Props>) => {
 	return (
 		<S.Circle
 			$x={x}
@@ -11,7 +11,7 @@ const Circle = ({ x, y, radius, isHighlighted = false, onClick }: Readonly<Props
 			onClick={onClick}
 		/>
 	);
-};
+});
 
 export { Circle };
 export interface Props {

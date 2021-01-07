@@ -6,7 +6,9 @@ class Storage<T> implements IStorage<T> {
 	}
 
 	private getMaxKey() {
-		return Math.max(...this.store.map(([key]) => Number(key)));
+		const key = Math.max(...this.store.map(([key]) => Number(key)));
+
+		return Number.isFinite(key) ? key : 0;
 	}
 
 	addItem(item: T) {
